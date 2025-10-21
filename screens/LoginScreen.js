@@ -6,10 +6,11 @@ export default function LoginScreen({navigation}){
     const [email, setEmail] = useState('');
     const [clave, setClave] = useState('');
 
-    function entrar(){
-        //Logica
-        navigation.navigate('New'); // Ir a screen de Login
-    }
+ function entrar() {
+  // lógica de login
+  navigation.navigate('News');
+}
+
 
     return (
         <Layout>
@@ -25,9 +26,9 @@ export default function LoginScreen({navigation}){
                 hideText={true}
                 value={clave}
                 onChangeText={setClave} />
-            <ButtonRounded title="Entrar" onPress={entrar} />    
-            <ButtonRounded title="Registrarse" isPrimary={false}
-            onPress={() => navigation.navigate('Register') } />    
+            <ButtonRounded title="Confirmar" onPress={() => navigation.navigate('News')} /> 
+            <ButtonRounded title="Registrarse" isPrimary={false} />    
         </Layout>
+        
     );
 }

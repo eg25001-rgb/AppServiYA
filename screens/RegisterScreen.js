@@ -10,7 +10,7 @@ export default function RegisterScreen({navigation}){
 
     function entrar(){
     // logica 
-    navigation.navigate('New'); // ir a screen especifica
+    navigation.navigate('Register'); // ir a screen especifica
 }
 
     return (
@@ -47,7 +47,7 @@ export default function RegisterScreen({navigation}){
                 onChangeText={setConfirmarClave} />
             <ButtonRounded title="Confirmar" />    
             <ButtonRounded title="Iniciar sesion" isPrimary={false} 
-            onPress={() => navigation.navigate('Register') } />   
+            onPress={() => navigation.navigate('News') } />   
                
         </Layout>
     );
