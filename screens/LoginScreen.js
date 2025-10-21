@@ -1,9 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Layout, Input, ButtonRounded } from '../components';
+import { View } from 'react-native-web';
 
-export default function LoginScreen(){
+export default function LoginScreen({navigation}){
     const [email, setEmail] = useState('');
     const [clave, setClave] = useState('');
+
+    function entrar(){
+        //Logica
+        navigation.navigate('New'); // Ir a screen de Login
+    }
 
     return (
         <Layout>
@@ -19,8 +25,9 @@ export default function LoginScreen(){
                 hideText={true}
                 value={clave}
                 onChangeText={setClave} />
-            <ButtonRounded title="Entrar" />    
-            <ButtonRounded title="Registrarse" isPrimary={false} />    
+            <ButtonRounded title="Entrar" onPress={entrar} />    
+            <ButtonRounded title="Registrarse" isPrimary={false}
+            onPress={() => navigation.navigate('Register') } />    
         </Layout>
     );
 }

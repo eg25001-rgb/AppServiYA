@@ -1,12 +1,17 @@
 import { useState, useEffect } from 'react';
 import { Layout, Input, ButtonRounded } from '../components';
 
-export default function RegisterScreen(){
+export default function RegisterScreen({navigation}){
     const [nombre, setNombre] = useState('');
     const [genero, setGenero] = useState('');
     const [email, setEmail] = useState('');
     const [clave, setClave] = useState('');
     const [confirmarClave, setConfirmarClave] = useState('');
+
+    function entrar(){
+    // logica 
+    navigation.navigate('New'); // ir a screen especifica
+}
 
     return (
         <Layout>
@@ -41,7 +46,9 @@ export default function RegisterScreen(){
                 value={confirmarClave}
                 onChangeText={setConfirmarClave} />
             <ButtonRounded title="Confirmar" />    
-            <ButtonRounded title="Iniciar sesion" isPrimary={false} />    
+            <ButtonRounded title="Iniciar sesion" isPrimary={false} 
+            onPress={() => navigation.navigate('Register') } />   
+               
         </Layout>
     );
 }

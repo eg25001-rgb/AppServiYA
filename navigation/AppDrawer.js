@@ -11,12 +11,12 @@ const Drawer = createDrawerNavigator();
 export default function AppDrawer() {
   return (
     <Drawer.Navigator>
-      <Drawer.Screen name="Home" component={HomeScreen} 
+      <Drawer.Screen name="Login" component={LoginScreen} 
   options={{ 
-    title: "Inicio", 
+    title: "ServiYA", 
     drawerIcon: ({ color, size }) => <Ionicons name="key-outline" size={size} color={color} />,
   }} />
-      <Drawer.Screen name="Home" component={HomeScreen} 
+      <Drawer.Screen name="Register" component={RegisterScreen} 
   options={{ 
     title: "Registrar", 
     drawerIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,

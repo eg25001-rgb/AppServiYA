@@ -31,6 +31,8 @@ export default function AppTabs() {
       return <Ionicons name={iconName} size={size} color={color} />;
     },
   })}  
+  <Tab.Screen name="Login" component={LoginScreen} options={{ title: "Iniciar Sesion"}} />
+  <Tab.Screen name="Register" component={LoginScreen} options={{ title: "Registrarse"}} />  
     </Tab.Navigator>
   );
 }
