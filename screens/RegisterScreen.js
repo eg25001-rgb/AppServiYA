@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Layout, Input, ButtonRounded } from '../components';
+import { Alert } from 'react-native';
+
+
 
 export default function RegisterScreen({navigation}){
     const [nombre, setNombre] = useState('');
@@ -45,7 +48,15 @@ export default function RegisterScreen({navigation}){
                 hideText={true}
                 value={confirmarClave}
                 onChangeText={setConfirmarClave} />
-            <ButtonRounded title="Confirmar" />    
+
+           <ButtonRounded 
+  title="Confirmar" 
+  onPress={() => {
+    alert("Registro exitoso ✅ Tu cuenta ha sido creada correctamente.");
+    navigation.navigate('Login');
+  }}
+/>
+   
             <ButtonRounded title="Iniciar sesion" isPrimary={false} 
             onPress={() => navigation.navigate('News') } />   
                
