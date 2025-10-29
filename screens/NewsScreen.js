@@ -3,44 +3,54 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
-
-
 export default function NewsScreen() {
   const [busqueda, setBusqueda] = useState('');
   const navigation = useNavigation();
+
+  // Lista de servicios (cada uno con nombre e ícono
+  const servicios = [
+    { nombre: 'Plomeria', icon: 'water-outline' },
+    { nombre: 'Electricidad', icon: 'flash-outline' },
+    { nombre: 'Carpinteria', icon: 'hammer-outline' },
+    { nombre: 'Limpieza del Hogar', icon: 'trash-outline' },
+    { nombre: 'Pintura', icon: 'color-palette-outline' },
+    { nombre: 'Jardineria', icon: 'leaf-outline' },
+  ];
+
+  // Filtro: muestra solo los que coincidan con el texto buscado
+  const serviciosFiltrados = servicios.filter(servicio =>
+    servicio.nombre.toLowerCase().includes(busqueda.toLowerCase())
+  );
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Encabezado */}
       <View style={styles.header}>
-       <View style={styles.header}>
-  <TouchableOpacity 
-    style={styles.registerBtn}
-    onPress={() => navigation.navigate('Login')}>
-    <Text style={styles.registerText}>Iniciar sesion</Text>
-  </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.registerBtn}
+          onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.registerText}>Iniciar sesión</Text>
+        </TouchableOpacity>
 
-  <Text style={styles.logo}>Servi<Text style={{ color: '#7B61FF' }}>YA</Text></Text>
+        <Text style={styles.logo}>
+          Servi<Text style={styles.logoHighlight}>YA</Text>
+        </Text>
 
-  <TouchableOpacity  
-    style={styles.registerBtn} 
-    onPress={() => navigation.navigate('Register')}>
-    <Text style={styles.registerText}>Registrarse</Text>
-  </TouchableOpacity>
-</View>
-
-       
+        <TouchableOpacity  
+          style={styles.registerBtn} 
+          onPress={() => navigation.navigate('Register')}>
+          <Text style={styles.registerText}>Registrarse</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Título principal */}
-      <Text style={styles.title}></Text>
+      {/* Subtítulo */}
       <Text style={styles.subtitle}>
         Encuentra ayuda calificada para cualquier tipo de trabajo que se requiera.
       </Text>
 
       {/* Barra de búsqueda */}
       <View style={styles.searchContainer}>
-        <Ionicons name="search-outline" size={20} color="#888" style={{ marginRight: 8 }} />
+        <Ionicons name="search-outline" size={20} color="#888" style={styles.searchIcon} />
         <TextInput
           style={styles.input}
           placeholder="¿En qué necesitas ayuda?"
@@ -52,34 +62,28 @@ export default function NewsScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Servicios populares */}
+      {/* Lista filtrada de servicios */}
       <Text style={styles.sectionTitle}>Nuestros Servicios Populares</Text>
 
       <View style={styles.servicesContainer}>
-        <View style={styles.service}>
-          <Ionicons name="water-outline" size={28} color="#7B61FF" />
-          <Text style={styles.serviceText}>Plomería</Text>
-        </View>
-
-        <View style={styles.service}>
-          <Ionicons name="flash-outline" size={28} color="#7B61FF" />
-          <Text style={styles.serviceText}>Electricidad</Text>
-        </View>
-
-        <View style={styles.service}>
-          <Ionicons name="hammer-outline" size={28} color="#7B61FF" />
-          <Text style={styles.serviceText}>Carpintería</Text>
-        </View>
-
-        <View style={styles.service}>
-          <Ionicons name="trash-outline" size={28} color="#7B61FF" />
-          <Text style={styles.serviceText}>Limpieza del Hogar</Text>
-        </View>
+        {serviciosFiltrados.length > 0 ? (
+          serviciosFiltrados.map((servicio, index) => (
+            <TouchableOpacity key={index} style={styles.service}>
+              <Ionicons name={servicio.icon} size={28} color="#7B61FF" />
+              <Text style={styles.serviceText}>{servicio.nombre}</Text>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Text style={styles.noResults}>
+            No se encontraron resultados 😕
+          </Text>
+        )}
       </View>
     </ScrollView>
   );
 }
 
+// Estilos aplicados
 const styles = StyleSheet.create({
   container: {
     padding: 20,
@@ -87,16 +91,19 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: 'center',
   },
- header: {
-  width: '100%',
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  marginBottom: 30,
-},
+  header: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 30,
+  },
   logo: {
     fontSize: 22,
     fontWeight: 'bold',
+  },
+  logoHighlight: {
+    color: '#7B61FF',
   },
   registerBtn: {
     backgroundColor: '#7B61FF',
@@ -107,13 +114,6 @@ const styles = StyleSheet.create({
   registerText: {
     color: '#fff',
     fontWeight: '600',
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: '700',
-    textAlign: 'center',
-    color: '#222',
-    marginBottom: 10,
   },
   subtitle: {
     textAlign: 'center',
@@ -132,6 +132,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     marginBottom: 40,
+    width: '100%',
+  },
+  searchIcon: {
+    marginRight: 8,
   },
   input: {
     flex: 1,
@@ -151,6 +155,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     marginBottom: 20,
+    alignSelf: 'flex-start',
   },
   servicesContainer: {
     flexDirection: 'row',
@@ -170,5 +175,11 @@ const styles = StyleSheet.create({
     marginTop: 8,
     color: '#333',
     fontWeight: '600',
+  },
+  noResults: {
+    color: '#888',
+    textAlign: 'center',
+    marginTop: 20,
+    width: '100%',
   },
 });
