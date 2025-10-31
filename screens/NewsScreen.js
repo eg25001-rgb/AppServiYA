@@ -1,185 +1,427 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  ScrollView, 
+  StyleSheet,
+  Pressable, 
+  Alert,
+  Platform 
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+// ¡SIN AuthContext!
+
+// --- DATOS DE EJEMPLO PARA LOS TESTIMONIOS ---
+const dummyTestimonials = [
+  {
+    id: 1,
+    name: 'Ana Deisy López',
+    rating: 5,
+    text: '"¡Servicio impecable! María resolvió una fuga complicada en mi baño. Muy profesional, puntual y honesta con el precio. ¡La recomiendo!"',
+  },
+  {
+    id: 2,
+    name: 'Carlos Henríquez',
+    rating: 5,
+    text: '"Beatriz es una electricista excepcional. Instaló todo el sistema de luces LED en mi negocio y me asesoró para ahorrar energía. Un trabajo de 10."',
+  },
+  {
+    id: 3,
+    name: 'Lucía Vásquez',
+    rating: 4,
+    text: '"El mueble que me hizo Oscar Meléndez es una obra de arte, aunque demoró un poco más de lo pactado. La calidad es indiscutible."',
+  },
+  {
+    id: 4,
+    name: 'Roberto Martínez',
+    rating: 5,
+    text: '"El equipo de jardinería transformó mi patio. Rápidos, limpios y con un gran ojo para el diseño. Mi jardín nunca se vio mejor."',
+  }
+];
 
 export default function NewsScreen() {
   const [busqueda, setBusqueda] = useState('');
   const navigation = useNavigation();
 
-  // Lista de servicios (cada uno con nombre e ícono
-  const servicios = [
-    { nombre: 'Plomeria', icon: 'water-outline' },
+  // Lista de servicios (primeros 6 para populares)
+  const popularServices = [
+    { nombre: 'Plomería', icon: 'water-outline' },
     { nombre: 'Electricidad', icon: 'flash-outline' },
-    { nombre: 'Carpinteria', icon: 'hammer-outline' },
+    { nombre: 'Carpintería', icon: 'hammer-outline' },
     { nombre: 'Limpieza del Hogar', icon: 'trash-outline' },
     { nombre: 'Pintura', icon: 'color-palette-outline' },
-    { nombre: 'Jardineria', icon: 'leaf-outline' },
+    { nombre: 'Jardinería', icon: 'leaf-outline' },
   ];
-
-  // Filtro: muestra solo los que coincidan con el texto buscado
-  const serviciosFiltrados = servicios.filter(servicio =>
-    servicio.nombre.toLowerCase().includes(busqueda.toLowerCase())
-  );
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Encabezado */}
+      
+      {/* --- 1. SECCIÓN DEL HEADER --- */}
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.registerBtn}
           onPress={() => navigation.navigate('Login')}>
           <Text style={styles.registerText}>Iniciar sesión</Text>
         </TouchableOpacity>
-
-        <Text style={styles.logo}>
-          Servi<Text style={styles.logoHighlight}>YA</Text>
-        </Text>
-
-        <TouchableOpacity  
+        <Text style={styles.logo}>Servi<Text style={styles.logoHighlight}>YA</Text></Text>
+        <TouchableOpacity 
           style={styles.registerBtn} 
           onPress={() => navigation.navigate('Register')}>
           <Text style={styles.registerText}>Registrarse</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Subtítulo */}
-      <Text style={styles.subtitle}>
-        Encuentra ayuda calificada para cualquier tipo de trabajo que se requiera.
-      </Text>
+      {/* --- 2. SECCIÓN DEL HUD (BÚSQUEDA) --- */}
+      <View style={styles.hudContainer}>
+        <Text style={styles.mainTitle}>Ayuda de confianza para las tareas del hogar</Text>
+        <Text style={styles.subtitle}>
+          Encuentra ayuda calificada para cualquier cosa, desde reparaciones del hogar hasta mandados.
+        </Text>
+        <View style={styles.searchContainer}>
+          <Ionicons name="search-outline" size={20} color="#888" style={styles.searchIcon} />
+          <TextInput
+            style={styles.input}
+            placeholder="¿En qué necesitas ayuda?"
+            placeholderTextColor="#888"
+            value={busqueda}
+            onChangeText={setBusqueda}
+          />
+          <TouchableOpacity style={styles.searchButton}>
+            <Text style={styles.searchButtonText}>Buscar</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
-      {/* Barra de búsqueda */}
-      <View style={styles.searchContainer}>
-        <Ionicons name="search-outline" size={20} color="#888" style={styles.searchIcon} />
-        <TextInput
-          style={styles.input}
-          placeholder="¿En qué necesitas ayuda?"
-          value={busqueda}
-          onChangeText={setBusqueda}
-        />
-        <TouchableOpacity style={styles.searchButton}>
-          <Text style={styles.searchButtonText}>Buscar</Text>
+      {/* --- 3. SECCIÓN DE SERVICIOS POPULARES (Fondo gris) --- */}
+      <View style={styles.servicesSection}>
+        <Text style={styles.sectionTitle}>Nuestros Servicios Populares</Text>
+        <View style={styles.servicesContainer}>
+          {popularServices.map((servicio, index) => (
+            <Pressable 
+              key={index} 
+              style={({ pressed }) => [ styles.service, pressed && styles.servicePressed ]}
+              onPress={() => Alert.alert(
+                'Inicia Sesión', 
+                'Debes iniciar sesión para ver los servicios.',
+                [
+                  { text: 'Cancelar', style: 'cancel' },
+                  { text: 'Iniciar Sesión', onPress: () => navigation.navigate('Login') }
+                ]
+              )}
+            >
+              <Ionicons name={servicio.icon} size={28} color="#7B61FF" />
+              <Text style={styles.serviceText}>{servicio.nombre}</Text>
+            </Pressable>
+          ))}
+        </View>
+        <TouchableOpacity 
+          style={styles.verTodosButton}
+          onPress={() => navigation.navigate('AllServices')}
+        >
+          <Text style={styles.verTodosButtonText}>Ver todos los servicios</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Lista filtrada de servicios */}
-      <Text style={styles.sectionTitle}>Nuestros Servicios Populares</Text>
-
-      <View style={styles.servicesContainer}>
-        {serviciosFiltrados.length > 0 ? (
-          serviciosFiltrados.map((servicio, index) => (
-            <TouchableOpacity key={index} style={styles.service}>
-              <Ionicons name={servicio.icon} size={28} color="#7B61FF" />
-              <Text style={styles.serviceText}>{servicio.nombre}</Text>
-            </TouchableOpacity>
-          ))
-        ) : (
-          <Text style={styles.noResults}>
-            No se encontraron resultados 😕
-          </Text>
-        )}
+      {/* --- 4. NUEVA SECCIÓN: "¿CÓMO FUNCIONA?" (Fondo blanco) --- */}
+      <View style={styles.howItWorksSection}>
+        <Text style={styles.sectionTitle}>¿Cómo funciona?</Text>
+        <View style={styles.stepsContainer}>
+          {/* Paso 1 */}
+          <View style={styles.stepItem}>
+            <View style={styles.stepIconContainer}>
+              <Ionicons name="create-outline" size={28} color="#7B61FF" />
+            </View>
+            <Text style={styles.stepTitle}>1. Describe tu necesidad</Text>
+            <Text style={styles.stepSubtitle}>
+              Cuéntanos qué necesitas. Sé tan detallado como quieras.
+            </Text>
+          </View>
+          {/* Paso 2 */}
+          <View style={styles.stepItem}>
+            <View style={styles.stepIconContainer}>
+              <Ionicons name="chatbubbles-outline" size={28} color="#7B61FF" />
+            </View>
+            <Text style={styles.stepTitle}>2. Conecta con un experto</Text>
+            <Text style={styles.stepSubtitle}>
+              Nuestro sistema te conecta con el mejor técnico para el trabajo.
+            </Text>
+          </View>
+          {/* Paso 3 */}
+          <View style={styles.stepItem}>
+            <View style={styles.stepIconContainer}>
+              <Ionicons name="checkmark-circle-outline" size={28} color="#7B61FF" />
+            </View>
+            <Text style={styles.stepTitle}>3. Problema resuelto</Text>
+            <Text style={styles.stepSubtitle}>
+              Confirma la finalización y califica el servicio. ¡Así de fácil!
+            </Text>
+          </View>
+        </View>
       </View>
+
+      {/* --- 5. NUEVA SECCIÓN: "TESTIMONIOS" (Fondo gris) --- */}
+      <View style={styles.testimonialsSection}>
+        <Text style={styles.sectionTitle}>Lo que dicen nuestros clientes</Text>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+          {dummyTestimonials.map((item) => (
+            <View key={item.id} style={styles.testimonialCard}>
+              <View style={styles.testimonialHeader}>
+                <Ionicons name="person-circle" size={44} color="#555" />
+                <View style={styles.testimonialInfo}>
+                  <Text style={styles.testimonialName}>{item.name}</Text>
+                  <View style={styles.ratingContainer}>
+                    {/* Crea 5 estrellas basadas en el rating */}
+                    {[...Array(5)].map((_, i) => (
+                      <Ionicons 
+                        key={i}
+                        name="star" 
+                        size={16} 
+                        color={i < item.rating ? "#FFD700" : "#E0E0E0"}
+                      />
+                    ))}
+                  </View>
+                </View>
+              </View>
+              <Text style={styles.testimonialText}>{item.text}</Text>
+            </View>
+          ))}
+        </ScrollView>
+      </View>
+
+      {/* --- 6. NUEVA SECCIÓN: "FOOTER" (Fondo blanco) --- */}
+      <View style={styles.footer}>
+        <View style={styles.footerContent}>
+          <Text style={styles.logo}>Servi<Text style={styles.logoHighlight}>YA</Text></Text>
+          <View style={styles.socialIcons}>
+            <Ionicons name="logo-twitter" size={24} color="#555" style={styles.socialIcon} />
+            <Ionicons name="logo-facebook" size={24} color="#555" style={styles.socialIcon} />
+            <Ionicons name="logo-instagram" size={24} color="#555" style={styles.socialIcon} />
+          </View>
+        </View>
+        <Text style={styles.copyrightText}>© 2025 ServiYA. Todos los derechos reservados.</Text>
+      </View>
+
     </ScrollView>
   );
 }
 
-// Estilos aplicados
+// --- ESTILOS COMPLETOS ACTUALIZADOS ---
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    backgroundColor: '#F9F9F9',
+    backgroundColor: '#FFFFFF', 
     flexGrow: 1,
-    alignItems: 'center',
   },
+  // --- HEADER ---
   header: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 30,
+    paddingTop: 60, 
+    paddingBottom: 20, 
+    paddingHorizontal: 20, 
+    backgroundColor: '#FFFFFF', 
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 2 },
+      android: { elevation: 3, borderBottomWidth: 1, borderBottomColor: '#F0F0F0' },
+      web: { boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }
+    }),
   },
-  logo: {
-    fontSize: 22,
-    fontWeight: 'bold',
+  logo: { fontSize: 22, fontWeight: 'bold', color: '#333' },
+  logoHighlight: { color: '#7B61FF' },
+  registerBtn: { backgroundColor: '#7B61FF', paddingHorizontal: 15, paddingVertical: 6, borderRadius: 20 },
+  registerText: { color: '#fff', fontWeight: '600' },
+  // --- HUD ---
+  hudContainer: {
+    alignItems: 'center',
+    paddingHorizontal: 20, 
+    paddingTop: 40, 
+    paddingBottom: 40, 
+    backgroundColor: '#FFFFFF',
   },
-  logoHighlight: {
-    color: '#7B61FF',
-  },
-  registerBtn: {
-    backgroundColor: '#7B61FF',
-    paddingHorizontal: 15,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
-  registerText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  subtitle: {
-    textAlign: 'center',
-    color: '#555',
-    fontSize: 14,
-    marginBottom: 20,
-  },
+  mainTitle: { fontSize: 32, fontWeight: 'bold', color: '#333', textAlign: 'center', marginBottom: 10 },
+  subtitle: { textAlign: 'center', color: '#555', fontSize: 16, marginBottom: 30, maxWidth: 300 },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 30,
+    backgroundColor: '#F9F9F9', 
+    borderRadius: 10,
     paddingHorizontal: 15,
-    elevation: 3,
+    elevation: 2,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.05,
     shadowRadius: 3,
-    marginBottom: 40,
     width: '100%',
+    maxWidth: 400, 
+    height: 50,
   },
-  searchIcon: {
-    marginRight: 8,
-  },
-  input: {
-    flex: 1,
-    height: 40,
-  },
-  searchButton: {
-    backgroundColor: '#7B61FF',
-    paddingVertical: 8,
-    paddingHorizontal: 18,
-    borderRadius: 20,
-  },
-  searchButtonText: {
-    color: '#fff',
-    fontWeight: '600',
+  searchIcon: { marginRight: 10 },
+  input: { flex: 1, height: 50, color: '#333', fontSize: 16 },
+  searchButton: { backgroundColor: '#7B61FF', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 8 },
+  searchButtonText: { color: '#fff', fontWeight: '600', fontSize: 16 },
+  // --- SECCIÓN DE SERVICIOS ---
+  servicesSection: {
+    backgroundColor: '#F9F9F9', // Fondo gris claro
+    padding: 20,
+    paddingTop: 40,
+    paddingBottom: 40,
+    borderTopLeftRadius: 20, 
+    borderTopRightRadius: 20,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 24, // Título más grande
     fontWeight: '700',
-    marginBottom: 20,
-    alignSelf: 'flex-start',
+    marginBottom: 30, // Más espacio
+    textAlign: 'center', 
+    color: '#333',
   },
   servicesContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'center', 
     width: '100%',
   },
   service: {
-    width: '47%',
-    backgroundColor: '#F1EEFF',
-    borderRadius: 20,
-    paddingVertical: 25,
-    marginBottom: 15,
+    width: 100, 
+    height: 100, 
+    backgroundColor: '#FFFFFF', 
+    borderRadius: 15,
+    padding: 15,
+    margin: 12, // Más espacio
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#F0F0F0', 
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+  },
+  servicePressed: { backgroundColor: '#F1EEFF', borderColor: '#7B61FF' },
+  serviceText: { marginTop: 8, color: '#333', fontWeight: '600', fontSize: 12, textAlign: 'center' },
+  verTodosButton: {
+    backgroundColor: 'transparent',
+    paddingVertical: 14,
+    borderRadius: 10,
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 20,
+    borderWidth: 2,
+    borderColor: '#E0E0E0',
+  },
+  verTodosButtonText: { color: '#555', fontSize: 16, fontWeight: 'bold' },
+  
+  // --- NUEVOS ESTILOS: CÓMO FUNCIONA ---
+  howItWorksSection: {
+    backgroundColor: '#FFFFFF', // Fondo blanco
+    padding: 20,
+    paddingTop: 40,
+    paddingBottom: 40,
     alignItems: 'center',
   },
-  serviceText: {
-    marginTop: 8,
-    color: '#333',
-    fontWeight: '600',
+  stepsContainer: {
+    flexDirection: 'row', // Horizontal en web
+    justifyContent: 'space-around',
+    flexWrap: 'wrap', // Se apilará en móviles
+    width: '100%',
   },
-  noResults: {
-    color: '#888',
+  stepItem: {
+    alignItems: 'center',
+    width: '100%', // Ocupa todo en móvil
+    maxWidth: 250, // Límite en web
+    padding: 10,
+    marginBottom: 30,
+  },
+  stepIconContainer: {
+    backgroundColor: '#F1EEFF',
+    borderRadius: 30, // Círculo
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  stepTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 5,
+    textAlign: 'center',
+  },
+  stepSubtitle: {
+    fontSize: 14,
+    color: '#555',
+    textAlign: 'center',
+  },
+
+  // --- NUEVOS ESTILOS: TESTIMONIOS ---
+  testimonialsSection: {
+    backgroundColor: '#F9F9F9', // Fondo gris claro
+    padding: 20,
+    paddingTop: 40,
+    paddingBottom: 50,
+  },
+  testimonialCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 15,
+    padding: 20,
+    width: 300, // Ancho fijo para el scroll horizontal
+    marginRight: 15,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  testimonialHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  testimonialInfo: {
+    marginLeft: 10,
+  },
+  testimonialName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+  },
+  testimonialText: {
+    fontSize: 14,
+    color: '#333',
+    fontStyle: 'italic',
+    lineHeight: 20,
+  },
+
+  // --- NUEVOS ESTILOS: FOOTER ---
+  footer: {
+    backgroundColor: '#FFFFFF',
+    padding: 30,
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F0',
+  },
+  footerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap', // Para móviles
+  },
+  socialIcons: {
+    flexDirection: 'row',
+  },
+  socialIcon: {
+    marginLeft: 15,
+  },
+  copyrightText: {
     textAlign: 'center',
     marginTop: 20,
-    width: '100%',
+    color: '#888',
+    fontSize: 12,
   },
 });

@@ -1,38 +1,45 @@
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
-// importar screens de los tabs
-import LoginScreen from '../screens/LoginScreen';
-import RegisterScreen from  '../screens/RegisterScreen';
+// --- CORRECCIÓN DE RUTAS ---
+// Desde config/navigation/ -> ../../screens/
+import NewsScreen from '../../screens/NewsScreen.js';
+import ProfileScreen from '../../screens/ProfileScreen.js'; 
 
-// crear tabs
 const Tab = createBottomTabNavigator();
 
-// exportar tabs
 export default function AppTabs() {
   return (
-    <Tab.Navigator>
-     screenOptions={({ route }) => ({
-    headerShown: false,
-    tabBarShowLabel: true,
-    tabBarActiveTintColor: '#0051CA', // color tabs
-    tabBarInactiveTintColor: 'gray',
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarShowLabel: true,
+        tabBarActiveTintColor: '#0051CA',
+        tabBarInactiveTintColor: 'gray',
+        tabBarIcon: ({ color, size, focused }) => {
+          let iconName;
 
-    // configurar icono segun name
-    tabBarIcon: ({ color, size, focused }) => {
-      let iconName;
+          if (route.name === 'NewsFeed') {
+            iconName = focused ? 'newspaper' : 'newspaper-outline';
+          } else if (route.name === 'Profile') {
+            iconName = focused ? 'person-circle' : 'person-circle-outline';
+          }
 
-      if (route.name === 'Login') {
-        iconName = focused ? 'key' : 'key-outline';
-      } else if (route.name === 'Register') {
-        iconName = focused ? 'person' : 'person-outline';
-      }
-
-      return <Ionicons name={iconName} size={size} color={color} />;
-    },
-  })}  
-  <Tab.Screen name="Login" component={LoginScreen} options={{ title: "Iniciar Sesion"}} />
-  <Tab.Screen name="Register" component={LoginScreen} options={{ title: "Registrarse"}} />  
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+      })}
+    >
+      <Tab.Screen 
+        name="NewsFeed" 
+        component={NewsScreen} 
+        options={{ title: "Noticias" }} 
+      />
+      <Tab.Screen 
+        name="Profile" 
+        component={ProfileScreen} 
+        options={{ title: "Mi Perfil" }} 
+      />
     </Tab.Navigator>
   );
 }

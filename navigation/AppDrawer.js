@@ -1,35 +1,39 @@
+import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import {Ionicons } from '@expo/vector-icons';
-// importar screens del menu lateral
-import NewsScreen from '../screens/NewsScreen';
-import RegisterScreen from  '../screens/RegisterScreen';
-import LoginScreen from '../screens/LoginScreen';
+import { Ionicons } from '@expo/vector-icons';
 
+// --- ¡Importamos los TABS y la pantalla de Perfil! ---
+import AppTabs from './AppTabs'; // ¡Importamos el navegador de Tabs completo!
+import ProfileScreen from '../screens/ProfileScreen';
+// Ya no importamos Login ni Register aquí
 
-// crear menu lateral
 const Drawer = createDrawerNavigator();
 
-// exportar menu lateral
 export default function AppDrawer() {
   return (
     <Drawer.Navigator>
-      <Drawer.Screen name="News" component={NewsScreen} 
-  options={{ 
-    title: "Menu", 
-    drawerIcon: ({ color, size }) => <Ionicons name="key-outline" size={size} color={color} />,
-  }} />
+      {/* Esta es la pantalla principal, que CONTIENE los tabs */}
+      <Drawer.Screen 
+        name="Home" 
+        component={AppTabs} // ¡Los tabs están anidados aquí!
+        options={{
+          title: "Inicio (Noticias)",
+          drawerIcon: ({ color, size }) => <Ionicons name="home-outline" size={size} color={color} />,
+        }} 
+      />
+      
+      {/* Esta es una pantalla separada en el Drawer */}
+      <Drawer.Screen 
+        name="ProfileDrawer" // Nombre diferente a la del Tab para evitar conflictos
+        component={ProfileScreen} 
+        options={{
+          title: "Mi Perfil",
+          drawerIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
+        }} 
+      />
+      
+      {/* Aquí puedes agregar "Configuración", "Mis Contratos", etc. */}
 
-<Drawer.Screen name="Login" component={LoginScreen} 
-options={{ 
-  title: "Iniciar sesion", 
-  drawerIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
-}} />
-
-      <Drawer.Screen name="Register" component={RegisterScreen} 
-  options={{ 
-    title: "Registrar", 
-    drawerIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
-  }} />
     </Drawer.Navigator>
   );
 }

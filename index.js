@@ -1,8 +1,5 @@
 import { registerRootComponent } from 'expo';
+import App from './App.js'; // Importa tu App.js (con .js)
 
-import App from './App';
-
-// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
-// It also ensures that whether you load the app in Expo Go or in a native build,
-// the environment is set up appropriately
+// Registra el componente App como la raíz
 registerRootComponent(App);
