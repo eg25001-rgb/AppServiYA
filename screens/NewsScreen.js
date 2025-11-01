@@ -44,9 +44,9 @@ const dummyTestimonials = [
 
 export default function NewsScreen() {
   const [busqueda, setBusqueda] = useState('');
+  const [resultados, setResultados] = useState([]);
   const navigation = useNavigation();
 
-  // Lista de servicios (primeros 6 para populares)
   const popularServices = [
     { nombre: 'Plomería', icon: 'water-outline' },
     { nombre: 'Electricidad', icon: 'flash-outline' },
@@ -56,10 +56,24 @@ export default function NewsScreen() {
     { nombre: 'Jardinería', icon: 'leaf-outline' },
   ];
 
+  const handleBuscar = () => {
+    console.log('handleBuscar fired, busqueda =', busqueda);
+    const texto = busqueda.trim().toLowerCase();
+    if (texto === '') {
+      setResultados([]);
+      return;
+    }
+    const filtrados = popularServices.filter(s =>
+      s.nombre.toLowerCase().includes(texto)
+    );
+    setResultados(filtrados);
+  };
+
+  const serviciosAMostrar = resultados.length > 0 ? resultados : popularServices;
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      
-      {/* --- 1. SECCIÓN DEL HEADER --- */}
+      {/* --- HEADER (igual) --- */}
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.registerBtn}
@@ -74,55 +88,68 @@ export default function NewsScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* --- 2. SECCIÓN DEL HUD (BÚSQUEDA) --- */}
+      {/* --- HUD (BÚSQUEDA) con fixes --- */}
       <View style={styles.hudContainer}>
         <Text style={styles.mainTitle}>Ayuda de confianza para las tareas del hogar</Text>
         <Text style={styles.subtitle}>
           Encuentra ayuda calificada para cualquier cosa, desde reparaciones del hogar hasta mandados.
         </Text>
+
         <View style={styles.searchContainer}>
           <Ionicons name="search-outline" size={20} color="#888" style={styles.searchIcon} />
+
+          {/* paddingRight evita que el input 'se meta' encima del botón */}
           <TextInput
             style={styles.input}
             placeholder="¿En qué necesitas ayuda?"
             placeholderTextColor="#888"
             value={busqueda}
             onChangeText={setBusqueda}
+            onSubmitEditing={handleBuscar}
           />
-          <TouchableOpacity style={styles.searchButton}>
+
+          {/* Asegúrate onPress está presente; hitSlop y zIndex para problemas de click */}
+          <TouchableOpacity
+            style={styles.searchButton}
+            onPress={handleBuscar}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            accessibilityRole="button"
+          >
             <Text style={styles.searchButtonText}>Buscar</Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* --- 3. SECCIÓN DE SERVICIOS POPULARES (Fondo gris) --- */}
+       {/* --- SERVICIOS POPULARES (usa serviciosAMostrar) --- */}
       <View style={styles.servicesSection}>
-        <Text style={styles.sectionTitle}>Nuestros Servicios Populares</Text>
+        <Text style={styles.sectionTitle}>
+          {resultados.length > 0 ? 'Resultados de búsqueda' : 'Nuestros Servicios Populares'}
+        </Text>
         <View style={styles.servicesContainer}>
-          {popularServices.map((servicio, index) => (
-            <Pressable 
-              key={index} 
-              style={({ pressed }) => [ styles.service, pressed && styles.servicePressed ]}
-              onPress={() => Alert.alert(
-                'Inicia Sesión', 
-                'Debes iniciar sesión para ver los servicios.',
-                [
-                  { text: 'Cancelar', style: 'cancel' },
-                  { text: 'Iniciar Sesión', onPress: () => navigation.navigate('Login') }
-                ]
-              )}
-            >
-              <Ionicons name={servicio.icon} size={28} color="#7B61FF" />
-              <Text style={styles.serviceText}>{servicio.nombre}</Text>
-            </Pressable>
-          ))}
+          {serviciosAMostrar.length > 0 ? (
+            serviciosAMostrar.map((servicio, index) => (
+              <Pressable
+                key={index}
+                style={({ pressed }) => [styles.service, pressed && styles.servicePressed]}
+                onPress={() => Alert.alert(
+                  'Inicia Sesión',
+                  `Debes iniciar sesión para ver el servicio de ${servicio.nombre}.`,
+                  [
+                    { text: 'Cancelar', style: 'cancel' },
+                    { text: 'Iniciar Sesión', onPress: () => navigation.navigate('Login') }
+                  ]
+                )}
+              >
+                <Ionicons name={servicio.icon} size={28} color="#7B61FF" />
+                <Text style={styles.serviceText}>{servicio.nombre}</Text>
+              </Pressable>
+            ))
+          ) : (
+            <Text style={{ color: '#888', textAlign: 'center', marginTop: 10 }}>
+              No se encontraron resultados.
+            </Text>
+          )}
         </View>
-        <TouchableOpacity 
-          style={styles.verTodosButton}
-          onPress={() => navigation.navigate('AllServices')}
-        >
-          <Text style={styles.verTodosButtonText}>Ver todos los servicios</Text>
-        </TouchableOpacity>
       </View>
 
       {/* --- 4. NUEVA SECCIÓN: "¿CÓMO FUNCIONA?" (Fondo blanco) --- */}
