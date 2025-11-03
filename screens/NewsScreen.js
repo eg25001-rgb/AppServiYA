@@ -42,18 +42,21 @@ const dummyTestimonials = [
   }
 ];
 
-export default function NewsScreen() {
+export default function NewsScreen({ route }) {
   const [busqueda, setBusqueda] = useState('');
   const [resultados, setResultados] = useState([]);
   const navigation = useNavigation();
+  
+  // Verificar si el usuario está autenticado
+  const isAuthenticated = route.params?.displayName ? true : false;
 
   const popularServices = [
-    { nombre: 'Plomería', icon: 'water-outline' },
-    { nombre: 'Electricidad', icon: 'flash-outline' },
-    { nombre: 'Carpintería', icon: 'hammer-outline' },
-    { nombre: 'Limpieza del Hogar', icon: 'trash-outline' },
-    { nombre: 'Pintura', icon: 'color-palette-outline' },
-    { nombre: 'Jardinería', icon: 'leaf-outline' },
+    { nombre: 'Plomería', icon: 'water-outline', description: 'Reparaciones de tuberías y sistemas de agua.' },
+    { nombre: 'Electricidad', icon: 'flash-outline', description: 'Instalaciones y reparaciones eléctricas.' },
+    { nombre: 'Carpintería', icon: 'hammer-outline', description: 'Muebles a medida y reparaciones en madera.' },
+    { nombre: 'Limpieza del hogar', icon: 'trash-outline', description: 'Servicio de limpieza profunda y mantenimiento.' },
+    { nombre: 'Pintura', icon: 'color-palette-outline', description: 'Pintura de interiores y exteriores.' },
+    { nombre: 'Jardinería', icon: 'leaf-outline', description: 'Diseño y mantenimiento de jardines.' },
   ];
 
   const handleBuscar = () => {
@@ -67,6 +70,29 @@ export default function NewsScreen() {
       s.nombre.toLowerCase().includes(texto)
     );
     setResultados(filtrados);
+  };
+
+  // Función para manejar el clic en un servicio
+  const handleServicePress = (servicio) => {
+    if (isAuthenticated) {
+      // Si está autenticado, navegar a ServicesDetail
+      navigation.navigate('ServicesDetail', {
+        service: {
+          name: servicio.nombre,
+          description: servicio.description
+        }
+      });
+    } else {
+      // Si no está autenticado, mostrar alerta
+      Alert.alert(
+        'Inicia Sesión',
+        `Debes iniciar sesión para ver el servicio de ${servicio.nombre}.`,
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Iniciar Sesión', onPress: () => navigation.navigate('Login') }
+        ]
+      );
+    }
   };
 
   const serviciosAMostrar = resultados.length > 0 ? resultados : popularServices;
@@ -131,14 +157,7 @@ export default function NewsScreen() {
               <Pressable
                 key={index}
                 style={({ pressed }) => [styles.service, pressed && styles.servicePressed]}
-                onPress={() => Alert.alert(
-                  'Inicia Sesión',
-                  `Debes iniciar sesión para ver el servicio de ${servicio.nombre}.`,
-                  [
-                    { text: 'Cancelar', style: 'cancel' },
-                    { text: 'Iniciar Sesión', onPress: () => navigation.navigate('Login') }
-                  ]
-                )}
+                onPress={() => handleServicePress(servicio)}
               >
                 <Ionicons name={servicio.icon} size={28} color="#7B61FF" />
                 <Text style={styles.serviceText}>{servicio.nombre}</Text>
@@ -437,7 +456,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    flexWrap: 'wrap', // Para móviles
+    flexWrap: 'wrap', 
   },
   socialIcons: {
     flexDirection: 'row',
